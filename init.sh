@@ -64,3 +64,14 @@ veewee vbox build ${VMNAME}
 
 
 #Opscode Public Cookbooksからcehfのcookbookの一覧取得
+##一覧作成->(1)->インストールアプリ選択->exitまで1へループ?
+
+###cookbook一覧を作成
+####https://github.com/opscode-cookbooksを解析
+####https://api.github.com/users/opscode-cookbooks/repos
+
+
+
+##インストールアプリ選択画面
+
+
