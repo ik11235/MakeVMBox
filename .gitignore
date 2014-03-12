@@ -1,0 +1,7 @@
+#veewee-workfiles
+definitions/
+iso/
+
+#tmp-files
+testfile/
+*~
