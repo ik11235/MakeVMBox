@@ -10,5 +10,10 @@
   <%= @vmimage.osversion %>
 </p>
 
+<p>
+  <strong>Tags:</strong>
+  <%= @vmimage.tag_list %>
+</p>
+
 <%= link_to 'Edit', edit_vmimage_path(@vmimage) %> |
 <%= link_to 'Back', vmimages_path %>

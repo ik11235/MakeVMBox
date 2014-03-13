@@ -17,7 +17,7 @@
       <tr>
         <td><%= vmimage.osname %></td>
         <td><%= vmimage.osversion %></td>
-        <td><%= @vmimage.tags.each do |tag| tag+" " end%></td>
+        <td><%= vmimage.tag_list %></td>
         <td><%= link_to 'Show', vmimage %></td>
         <td><%= link_to 'Edit', edit_vmimage_path(vmimage) %></td>
         <td><%= link_to 'Destroy', vmimage, method: :delete, data: { confirm: 'Are you sure?' } %></td>

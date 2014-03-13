@@ -25,7 +25,7 @@ class VmimagesController < ApplicationController
   # POST /vmimages.json
   def create
     @vmimage = Vmimage.new(vmimage_params)
-
+#    @vmimage.tag_list.add(vmimage_params.tag_list)
     respond_to do |format|
       if @vmimage.save
         format.html { redirect_to @vmimage, notice: 'Vmimage was successfully created.' }
@@ -69,6 +69,6 @@ class VmimagesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def vmimage_params
-      params.require(:vmimage).permit(:osname, :osversion)
+      params.require(:vmimage).permit(:osname, :osversion,:tag_list)
     end
 end

@@ -1,4 +1,4 @@
 class Vmimage < ActiveRecord::Base
-  attr_accessible :tag_list
   acts_as_taggable  
+  acts_as_taggable_on :skills, :interests
 end
