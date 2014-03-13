@@ -6,6 +6,8 @@ ShareVM::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   root 'info#index'
+
+  #mount API => "/"
   
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
@@ -56,3 +58,5 @@ ShareVM::Application.routes.draw do
   #     resources :products
   #   end
 end
+
+

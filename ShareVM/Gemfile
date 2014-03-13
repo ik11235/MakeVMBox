@@ -58,3 +58,14 @@ gem 'vagrant-omnibus', github: "schisamo/vagrant-omnibus"
 
 ##Use Tag Function
 gem 'acts-as-taggable-on'
+
+##Use WebAPI Function
+gem "grape"
+gem "rabl"
+gem "json_expressions"
+
+#testtools
+##group :test do
+##  gem "rspec"
+##  gem "rspec-rails"
+##end
