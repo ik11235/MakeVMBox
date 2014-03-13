@@ -2,6 +2,8 @@
 definitions/
 iso/
 
-#tmp-files
+#test-files
 testfile/
 *~
+*.vbox
+*.box

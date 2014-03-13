@@ -1,0 +1,30 @@
+<%= form_for(@vmimage) do |f| %>
+  <% if @vmimage.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@vmimage.errors.count, "error") %> prohibited this vmimage from being saved:</h2>
+
+      <ul>
+      <% @vmimage.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :osname %><br>
+    <%= f.text_field :osname %>
+  </div>
+  <div class="field">
+    <%= f.label :osversion %><br>
+    <%= f.text_field :osversion %>
+  </div>
+<div class="field">
+  <%= f.label :tags, "Tags (separated by commas)" %><br />
+  <%= f.text_field :tags %>
+</div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

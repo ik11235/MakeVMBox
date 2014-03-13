@@ -1,0 +1,2 @@
+module VmimagesHelper
+end

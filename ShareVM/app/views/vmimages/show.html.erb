@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Osname:</strong>
+  <%= @vmimage.osname %>
+</p>
+
+<p>
+  <strong>Osversion:</strong>
+  <%= @vmimage.osversion %>
+</p>
+
+<%= link_to 'Edit', edit_vmimage_path(@vmimage) %> |
+<%= link_to 'Back', vmimages_path %>

@@ -1,0 +1,31 @@
+<h1>Listing vmimages</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Osname</th>
+      <th>Osversion</th>
+      <th>Tag</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @vmimages.each do |vmimage| %>
+      <tr>
+        <td><%= vmimage.osname %></td>
+        <td><%= vmimage.osversion %></td>
+        <td><%= @vmimage.tags.each do |tag| tag+" " end%></td>
+        <td><%= link_to 'Show', vmimage %></td>
+        <td><%= link_to 'Edit', edit_vmimage_path(vmimage) %></td>
+        <td><%= link_to 'Destroy', vmimage, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Vmimage', new_vmimage_path %>
