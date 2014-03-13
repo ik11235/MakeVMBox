@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140313024216) do
+ActiveRecord::Schema.define(version: 20140313103732) do
 
   create_table "taggings", force: true do |t|
     t.integer  "tag_id"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 20140313024216) do
     t.string   "osversion"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "filepath"
   end
 
 end

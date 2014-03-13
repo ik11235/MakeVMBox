@@ -72,6 +72,6 @@ class VmimagesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def vmimage_params
-      params.require(:vmimage).permit(:osname, :osversion,:tag_list)
+      params.require(:vmimage).permit(:osname, :osversion,:tag_list,:file)
     end
 end
