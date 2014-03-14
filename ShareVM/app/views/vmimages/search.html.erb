@@ -4,14 +4,16 @@
   <div class="control-group">
     <%= f.label :osname_cont %>
     <div class="controls">
-      <%= f.text_field :osname_cont %>
+      <%= f.select :osname_eq, Vmimage.all.map{|st| [st.osname,st.osname]} %>
+
     </div>
   </div>
 
   <div class="control-group">
     <%= f.label :osversion_cont %>
     <div class="controls">
-      <%= f.text_field :osversion_cont %>
+      <%= f.select :osversion_eq, Vmimage.all.map{|st| [st.osversion,st.osversion]} %>
+
     </div>
   </div>
 
