@@ -69,3 +69,6 @@ gem "json_expressions"
 ##  gem "rspec"
 ##  gem "rspec-rails"
 ##end
+
+#localize
+gem "i18n"
