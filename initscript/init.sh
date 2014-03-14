@@ -5,6 +5,11 @@ VIRTUALBOX=`which virtualbox`
 VEEWEE=`which veewee`
 RUBY=`which ruby`
 
+VAGRANT="echo ${VAGRANT}"
+VIRTUALBOX="echo ${VIRTUALBOX}"
+VEEWEE="echo ${VEEWEE}"
+#RUBY="echo ${RUBY}"
+
 if [ -z "${VIRTUALBOX}" ];then
     echo 'VirtualBox not found'
     exit 1;
@@ -22,10 +27,13 @@ if [ -z "${RUBY}" ]; then
     exit 1;
 fi
 
+
+
 #veeweeからOSイメージの一覧を確認、選択したOSのイメージ一覧を表示
 ##OSLIST=(`veewee vbox templates | cut -d ' ' -f 5 |cut -d '-' -f 1 |grep -v "available" |  sort |uniq |sed -e s/\'//g`)
 
-TEMPLATES=`${VEEWEE} vbox templates |cut -d ' ' -f 5|sed -e s/\'//g |grep -v "available"`
+#TEMPLATES=`${VEEWEE} vbox templates |cut -d ' ' -f 5|sed -e s/\'//g |grep -v "available"`
+TEMPLATES=`VEEWEE vbox templates |cut -d ' ' -f 5|sed -e s/\'//g |grep -v "available"`
 OSLIST=(`echo ${TEMPLATES} | perl -pe 's/ /\n/g'|cut -d '-' -f 1|sort|uniq`)
 
 echo "What linux distribution do you install?"
@@ -142,4 +150,12 @@ ${VEEWEE} vbox build ${VMNAME}
 ${VEEWEE} vbox halt ${VMNAME}
 
 #boxのイメージ化
-${VAGRANT} package --base ${VMNAME} --output ${VMNAME}.vbox
+VMFILEPATH=${VMNAME}.vbox
+${VAGRANT} package --base ${VMNAME} --output ${VMFILEPATH}
+
+#作成したイメージの情報をwebに転送
+SELECT_TAG=`echo ${SELECTBOOKS[@]}|sed -e s/\ /\,/g`
+echo "tags =${SELECT_TAG}"
+curl -F vmimage\[osname\]=${SELECT_OS} -F vmimage\[osversion\]=${SELECT_VER} -F vmimage\[tag_list\]=${SELECT_TAG} -F vmimage\[file\]=\@${VMFILEPATH} "http://localhost:3000/vmimages"
+
+#${RUBY} jsonpost.rb ${SELECT_OS} ${SELECT_VER} ${SELECTBOOKS[@]}
