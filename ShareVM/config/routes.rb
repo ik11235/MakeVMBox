@@ -8,6 +8,14 @@ ShareVM::Application.routes.draw do
   root 'info#index'
 
   #mount API => "/"
+
+#  namespace "vmimages" do
+#    resources "download", :only=>["download"]
+#  end
+#  get ':controller(/:action(/:id(.:format)))'
+ 
+  get 'vmimage/:id/download' => 'vmimages#download',:as => "download_vmimage"
+#match 'vmimages/:id/download' => 'vmimages#download', :via => %w[get post]
   
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
@@ -41,7 +49,7 @@ ShareVM::Application.routes.draw do
   #     resources :comments
   #     resources :sales do
   #       get 'recent', on: :collection
-  #     end
+  ##     end
   #   end
 
   # Example resource route with concerns:

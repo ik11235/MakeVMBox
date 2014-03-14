@@ -1,5 +1,5 @@
 class VmimagesController < ApplicationController
-  before_action :set_vmimage, only: [:show, :edit, :update, :destroy]
+  before_action :set_vmimage, only: [:show, :edit, :update, :destroy, :download]
 
 
   # GET /vmimages
@@ -26,8 +26,8 @@ class VmimagesController < ApplicationController
   # POST /vmimages.json
   def create
     @vmimage = Vmimage.new(vmimage_params)
-    p "debug"
-    p vmimage_params
+    #    p "debug"
+    #    p vmimage_params
     #    @vmimage.tag_list.add(vmimage_params.tag_list)
     respond_to do |format|
       if @vmimage.save
@@ -64,6 +64,13 @@ class VmimagesController < ApplicationController
     end
   end
 
+  # GET /vmimages/1/dl
+  def download
+    filepath = @vmimage.full_path.encode("cp932")
+    stat = File::stat(filepath)
+    send_file(filepath)
+  end
+  
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_vmimage
@@ -74,4 +81,5 @@ class VmimagesController < ApplicationController
     def vmimage_params
       params.require(:vmimage).permit(:osname, :osversion,:tag_list,:file)
     end
+
 end

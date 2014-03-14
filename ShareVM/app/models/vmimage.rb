@@ -6,6 +6,10 @@ class Vmimage < ActiveRecord::Base
   
   before_create :store_file
   before_destroy :destroy_file
+
+  def full_path
+    return Rails.root.join('public').to_s + self.filepath
+  end
   
   private
   def store_file
@@ -25,8 +29,6 @@ class Vmimage < ActiveRecord::Base
     end
   end
   
-  def full_path
-    return Rails.root.join('public').to_s + self.filepath
-  end
+
 end
 

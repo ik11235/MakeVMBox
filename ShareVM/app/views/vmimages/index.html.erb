@@ -6,6 +6,7 @@
       <th>Osname</th>
       <th>Osversion</th>
       <th>Tag</th>
+      <th>ImageFile</th>
       <th></th>
       <th></th>
       <th></th>
@@ -18,6 +19,7 @@
         <td><%= vmimage.osname %></td>
         <td><%= vmimage.osversion %></td>
         <td><%= vmimage.tag_list %></td>
+        <td><%= link_to 'ImageDL',download_vmimage_path(vmimage) %></td>
         <td><%= link_to 'Show', vmimage %></td>
         <td><%= link_to 'Edit', edit_vmimage_path(vmimage) %></td>
         <td><%= link_to 'Destroy', vmimage, method: :delete, data: { confirm: 'Are you sure?' } %></td>
