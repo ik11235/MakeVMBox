@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 class VmimagesController < ApplicationController
   before_action :set_vmimage, only: [:show, :edit, :update, :destroy, :download]
 
@@ -5,7 +6,13 @@ class VmimagesController < ApplicationController
   # GET /vmimages
   # GET /vmimages.json
   def index
-    @vmimages = Vmimage.all
+    # 検索フォームの入力内容で検索する
+    @q = Vmimage.search(params[:q])
+    
+    # 重複を排除
+    @vmimages = @q.result(distinct: true)
+
+#    @vmimages = Vmimage.all
   end
 
   # GET /vmimages/1
@@ -69,6 +76,14 @@ class VmimagesController < ApplicationController
     filepath = @vmimage.full_path.encode("cp932")
     stat = File::stat(filepath)
     send_file(filepath)
+  end
+
+  def search
+    # 検索フォームの入力内容で検索する
+    @q = Vmimage.search(params[:q])
+    
+    # 重複を排除
+    @vmimage = @q.result(distinct: true)
   end
   
   private

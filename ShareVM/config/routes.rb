@@ -15,6 +15,8 @@ ShareVM::Application.routes.draw do
 #  get ':controller(/:action(/:id(.:format)))'
  
   get 'vmimage/:id/download' => 'vmimages#download',:as => "download_vmimage"
+  get 'vmimage/search' => 'vmimages#search',:as => "search_vmimage"
+
 #match 'vmimages/:id/download' => 'vmimages#download', :via => %w[get post]
   
   # Example of regular route:

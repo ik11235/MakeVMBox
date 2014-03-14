@@ -72,3 +72,7 @@ gem "json_expressions"
 
 #localize
 gem "i18n"
+
+#Search
+gem "ransack"
+
