@@ -4,7 +4,8 @@
   <div class="control-group">
     <%= f.label :osname_cont %>
     <div class="controls">
-      <%= f.select :osname_eq, Vmimage.all.map{|st| [st.osname,st.osname]} %>
+      <%= f.select :osname_eq, Vmimage.select(:osname).uniq.map{|st| [st.osname,st.osname]} %>
+
 
     </div>
   </div>
@@ -12,7 +13,7 @@
   <div class="control-group">
     <%= f.label :osversion_cont %>
     <div class="controls">
-      <%= f.select :osversion_eq, Vmimage.all.map{|st| [st.osversion,st.osversion]} %>
+      <%= f.select :osversion_eq, Vmimage.select(:osversion).uniq.map{|st| [st.osversion,st.osversion]} %>
 
     </div>
   </div>
