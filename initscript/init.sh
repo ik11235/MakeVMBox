@@ -103,6 +103,10 @@ done
 echo 'Please input VM image name : '
 read VMNAME
 
+#既存イメージの検索 
+##http://localhost:3000/vmimages.json?&q%5Bosname_eq%5D=ubuntu&q%5Bosversion_eq%5D=8.04.4-server-i386
+
+
 #選択イメージのインストール
 ${VEEWEE} vbox define ${VMNAME} ${SELECT_OS}-${SELECT_VER}
 
