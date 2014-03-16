@@ -15,7 +15,11 @@ class Vmimage < ActiveRecord::Base
   def store_file
     #    p "self this"
     #   p self
-    self.filepath = '/attachments/' + self.file.original_filename
+    self.filepath = '/attachments/' + SecureRandom.urlsafe_base64(6)
+    while File.exist?(full_path) do
+      self.filepath = '/attachments/' + SecureRandom.urlsafe_base64(6)  
+    end
+    
     File.open(full_path, "wb") do |f|
       f.write self.file.read
     end

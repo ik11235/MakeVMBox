@@ -117,10 +117,10 @@ if [ -n "${IDLIST[0]}" ]; then
 fi
 
 ##test 
-#touch ${VMFILEPATH}
-#SELECT_TAG=`echo ${SELECTBOOKS[@]}|sed -e s/\ /\,/g`
-#curl -F vmimage\[osname\]=${SELECT_OS} -F vmimage\[osversion\]=${SELECT_VER} -F vmimage\[tag_list\]=${SELECT_TAG} -F vmimage\[file\]=\@${VMFILEPATH} "${WEBROOT}/vmimages"
-#exit 0
+touch ${VMFILEPATH}
+SELECT_TAG=`echo ${SELECTBOOKS[@]}|sed -e s/\ /\,/g`
+curl -F vmimage\[osname\]=${SELECT_OS} -F vmimage\[osversion\]=${SELECT_VER} -F vmimage\[tag_list\]=${SELECT_TAG} -F vmimage\[file\]=\@${VMFILEPATH} "${WEBROOT}/vmimages"
+exit 0
 
 #選択イメージのインストール
 ${VEEWEE} vbox define ${VMNAME} ${SELECT_OS}-${SELECT_VER}
@@ -156,14 +156,11 @@ echo "berks install" >> ./definitions/${VMNAME}/Chef.sh # not found and not Berk
 ##echo "] end" >>Vagrantfile
 
 
-
-
 #イメージのビルド
 ${VEEWEE} vbox build ${VMNAME}
 
 #chef設定を行う?
 ##もしくはdefine直後に.shに追記する?
-
 
 #boxのシャットダウン
 ${VEEWEE} vbox halt ${VMNAME}
