@@ -1,26 +1,29 @@
 <h1>Saerch vmimage</h1>
-    
-<%= search_form_for @q do |f| %>
-  <div class="control-group">
-    <%= f.label :osname_cont %>
-    <div class="controls">
-      <%= f.select :osname_eq, Vmimage.select(:osname).uniq.map{|st| [st.osname,st.osname]} %>
 
-
+<%= search_form_for @q, :html => { :class => 'form-horizontal' } do |f|  %>
+<div class="control-group">
+  <%= f.label :osname, :class => 'control-label' %>
+  <div class="controls">
+    <%= f.select :osname_eq, Vmimage.select(:osname).uniq.map{|st| [st.osname,st.osname]}, :class => 'select' %>
     </div>
   </div>
 
-  <div class="control-group">
-    <%= f.label :osversion_cont %>
-    <div class="controls">
-      <%= f.select :osversion_eq, Vmimage.select(:osversion).uniq.map{|st| [st.osversion,st.osversion]} %>
-      
+<div class="control-group">
+  <%= f.label :osversion, :class => 'control-label' %>
+  <div class="controls">
+    <%= f.select :osversion_eq, Vmimage.select(:osversion).uniq.map{|st| [st.osversion,st.osversion]},  :class => 'select' %>
     </div>
   </div>
-  <div class="field">
-    <%= f.label :"Tags (separated by commas)" %>
+
+<div class="control-group">
+  <%= f.label :tag_list, "Tags (separated by \",\")", :class => 'control-label' %>
+  <div class="controls">
     <%= text_field_tag 'tag' %>
   </div>
-  
-  <%= f.submit %>
-  <% end %>
+</div>
+
+<div class="form-actions">
+  <%= f.submit nil, :class => 'btn btn-primary' %>
+
+</div>
+<% end %>

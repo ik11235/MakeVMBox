@@ -1,33 +1,46 @@
-<h1>Listing vmimages</h1>
-
-<table>
+<%- model_class = Vmimage -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
+</div>
+<table class="table table-striped">
   <thead>
     <tr>
-      <th>Osname</th>
-      <th>Osversion</th>
-      <th>Tag</th>
-      <th>ImageFile</th>
-      <th></th>
-      <th></th>
-      <th></th>
+      <th><%= model_class.human_attribute_name(:id) %></th>
+      <th><%= model_class.human_attribute_name(:osname) %></th>
+      <th><%= model_class.human_attribute_name(:osversion) %></th>
+      <th><%= model_class.human_attribute_name(:tag) %></th>
+      <th><%= model_class.human_attribute_name(:DL_link) %></th>
+      <th><%= model_class.human_attribute_name(:created_at) %></th>
+      <th><%=t '.actions', :default => t("helpers.actions") %></th>
     </tr>
   </thead>
-
   <tbody>
     <% @vmimages.each do |vmimage| %>
       <tr>
+        <td><%= link_to vmimage.id, vmimage_path(vmimage) %></td>
         <td><%= vmimage.osname %></td>
         <td><%= vmimage.osversion %></td>
         <td><%= vmimage.tag_list %></td>
-        <td><%= link_to 'ImageDL',download_vmimage_path(vmimage) %></td>
-        <td><%= link_to 'Show', vmimage %></td>
-        <td><%= link_to 'Edit', edit_vmimage_path(vmimage) %></td>
-        <td><%= link_to 'Destroy', vmimage, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+
+	<td>
+          <%= link_to t('.DownLoad', :default => t("helpers.links.download")),
+          download_vmimage_path(vmimage), :class => 'btn btn-mini' %></td>        
+        <td><%=l vmimage.created_at %></td>
+        <td>
+          <%= link_to t('.edit', :default => t("helpers.links.edit")),
+                      edit_vmimage_path(vmimage), :class => 'btn btn-mini' %>
+
+          <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
+                      vmimage_path(vmimage),
+                      :method => :delete,
+                      :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+                      :class => 'btn btn-mini btn-danger' %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<br>
-
-<%= link_to 'New Vmimage', new_vmimage_path %>
+<%= link_to t('.new', :default => t("helpers.links.new")),
+            new_vmimage_path,
+            :class => 'btn btn-primary' %>

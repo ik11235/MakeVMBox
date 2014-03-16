@@ -1,34 +1,34 @@
-<%= form_for(@vmimage) do |f| %>
-  <% if @vmimage.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@vmimage.errors.count, "error") %> prohibited this vmimage from being saved:</h2>
-
-      <ul>
-      <% @vmimage.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+<%= form_for @vmimage, :html => { :class => 'form-horizontal' } do |f| %>
+  <div class="control-group">
+    <%= f.label :osname, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :osname, :class => 'text_field' %>
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= f.label :osname %><br>
-    <%= f.text_field :osname %>
   </div>
-  <div class="field">
-    <%= f.label :osversion %><br>
-    <%= f.text_field :osversion %>
-  </div>
-<div class="field">
-  <%= f.label :tag_list, "Tags (separated by commas)" %><br>
-  <%= f.text_field :tag_list %>
-</div>
-  <div class="field">
-    <%= f.label :file %><br>
-    <%= f.file_field :file %>
+  <div class="control-group">
+    <%= f.label :osversion, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :osversion, :class => 'text_field' %>
+    </div>
   </div>
 
-  <div class="actions">
-    <%= f.submit %>
+  <div class="control-group">
+    <%= f.label :tag_list, "Tags (separated by \",\")", :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :tag_list, :class => 'text_field' %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <%= f.label :file  ,:class => 'control-label' %>
+    <div class="controls">
+      <%= f.file_field :file ,:class => 'file_field',:title=>"Search for a file to add" %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit nil, :class => 'btn btn-primary' %>
+    <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                vmimages_path, :class => 'btn' %>
   </div>
 <% end %>
