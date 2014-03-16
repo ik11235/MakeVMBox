@@ -76,7 +76,18 @@ echo Install image is ${SELECT_OS}-${SELECT_VER}
 ####https://github.com/opscode-cookbooksを解析
 ####https://api.github.com/users/opscode-cookbooks/repos
 
-COOKBOOKS=(`${RUBY} ./cheflist.rb`)
+
+
+TMPDIR="./TMP"
+mkdir -p ${TMPDIR}
+touch ${TMPDIR}/tmpfile
+DATE=`date +"%Y%m%d"`
+CHEFFILE="${TMPDIR}/CHEFLIST-${DATE}.txt"
+if [ ! -e ${CHEFFILE} ];then
+    rm ${TMPDIR}/*
+    ${RUBY} -W0 ./cheflist.rb >${CHEFFILE}    
+fi
+COOKBOOKS=(`cat ${CHEFFILE}`)
 
 ##インストールアプリ選択画面
 echo "select install COOKBOOKS"
@@ -103,7 +114,8 @@ VMFILEPATH=${VMNAME}.vbox
 
 #既存イメージの検索 
 ##http://localhost:3000/vmimages.json?&q%5Bosname_eq%5D=ubuntu&q%5Bosversion_eq%5D=8.04.4-server-i386
-IDLIST=(`${RUBY} search.rb ${SELECT_OS} ${SELECT_VER} ${SELECTBOOKS[@]}`)
+IDLIST=(`${RUBY} -W0 search.rb ${SELECT_OS} ${SELECT_VER} ${SELECTBOOKS[@]}`)
+
 if [ -n "${IDLIST[0]}" ]; then
     echo "This OSimage is already exists."
     echo "Download image?[Y/n]"
@@ -119,8 +131,21 @@ fi
 ##test 
 touch ${VMFILEPATH}
 SELECT_TAG=`echo ${SELECTBOOKS[@]}|sed -e s/\ /\,/g`
-curl -F vmimage\[osname\]=${SELECT_OS} -F vmimage\[osversion\]=${SELECT_VER} -F vmimage\[tag_list\]=${SELECT_TAG} -F vmimage\[file\]=\@${VMFILEPATH} "${WEBROOT}/vmimages"
-exit 0
+SUBMIT=`curl -F vmimage\[osname\]=${SELECT_OS} -F vmimage\[osversion\]=${SELECT_VER} -F vmimage\[tag_list\]=${SELECT_TAG} -F vmimage\[file\]=\@${VMFILEPATH} "${WEBROOT}/vmimages"`
+if [ $? -ne 0 ]; then
+  echo "File Upload Error! Please Manual upload to ${WEBROOT}";
+  echo "osname:${SELECT_OS}"
+  echo "osversion:${SELECT_VER}"
+  echo "tag:${SELECT_TAG}"
+  echo "vmfile:${VMFILEPATH}"
+  exit 1;
+else
+    SUBMIT=`echo ${SUBMIT}| sed -e 's/<html><body>You are being <a href=//'| sed -e 's/>redirected<\/a>\.<\/body><\/html>//'`
+    
+    echo "Success File Upload! Image File URL: ${SUBMIT}";
+    exit 0;
+fi
+
 
 #選択イメージのインストール
 ${VEEWEE} vbox define ${VMNAME} ${SELECT_OS}-${SELECT_VER}
