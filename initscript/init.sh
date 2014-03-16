@@ -10,6 +10,9 @@ VIRTUALBOX="echo ${VIRTUALBOX}"
 VEEWEE="echo ${VEEWEE}"
 #RUBY="echo ${RUBY}"
 
+WEBROOT="http://localhost:3000/"
+
+
 if [ -z "${VIRTUALBOX}" ];then
     echo 'VirtualBox not found'
     exit 1;
@@ -72,9 +75,8 @@ echo Install image is ${SELECT_OS}-${SELECT_VER}
 ###cookbook一覧を作成
 ####https://github.com/opscode-cookbooksを解析
 ####https://api.github.com/users/opscode-cookbooks/repos
-COOKBOOKS=(`${RUBY} ./cheflist.rb`)
-#COOKBOOKS+=("exit")
 
+COOKBOOKS=(`${RUBY} ./cheflist.rb`)
 
 ##インストールアプリ選択画面
 echo "select install COOKBOOKS"
@@ -85,9 +87,6 @@ select BOOKS in ${COOKBOOKS[@]}
 do
 if [ -z "${BOOKS}" ]; then
     continue;
-#elif [ "${BOOKS}" = "exit" ]; then
-#    echo "input exit"
-#    break;
 else
     SELECTBOOKS+=(${BOOKS});
 fi
@@ -95,17 +94,33 @@ fi
 echo "select install COOKBOOKS"
 echo "quit to typing \"^D\""
 echo "Now select package : ${SELECTBOOKS[@]}"
-
 done
-
 
 #イメージ名の指定
 echo 'Please input VM image name : '
 read VMNAME
+VMFILEPATH=${VMNAME}.vbox
 
 #既存イメージの検索 
 ##http://localhost:3000/vmimages.json?&q%5Bosname_eq%5D=ubuntu&q%5Bosversion_eq%5D=8.04.4-server-i386
+IDLIST=(`${RUBY} search.rb ${SELECT_OS} ${SELECT_VER} ${SELECTBOOKS[@]}`)
+if [ -n "${IDLIST[0]}" ]; then
+    echo "This OSimage is already exists."
+    echo "Download image?[Y/n]"
+    read ANSWER
+    case $ANSWER in
+	"" | "Y" | "y" | "yes" | "Yes" | "YES" )
+	    curl -o ${VMFILEPATH} ${WEBROOT}/vmimage/${IDLIST[0]}/download
+	    echo "finish Download VMimage. FILENAME is ${VMFILEPATH}"
+	    exit 0;;
+    esac
+fi
 
+##test 
+#touch ${VMFILEPATH}
+#SELECT_TAG=`echo ${SELECTBOOKS[@]}|sed -e s/\ /\,/g`
+#curl -F vmimage\[osname\]=${SELECT_OS} -F vmimage\[osversion\]=${SELECT_VER} -F vmimage\[tag_list\]=${SELECT_TAG} -F vmimage\[file\]=\@${VMFILEPATH} "${WEBROOT}/vmimages"
+#exit 0
 
 #選択イメージのインストール
 ${VEEWEE} vbox define ${VMNAME} ${SELECT_OS}-${SELECT_VER}
@@ -159,7 +174,7 @@ ${VAGRANT} package --base ${VMNAME} --output ${VMFILEPATH}
 
 #作成したイメージの情報をwebに転送
 SELECT_TAG=`echo ${SELECTBOOKS[@]}|sed -e s/\ /\,/g`
-echo "tags =${SELECT_TAG}"
-curl -F vmimage\[osname\]=${SELECT_OS} -F vmimage\[osversion\]=${SELECT_VER} -F vmimage\[tag_list\]=${SELECT_TAG} -F vmimage\[file\]=\@${VMFILEPATH} "http://localhost:3000/vmimages"
+#echo "tags =${SELECT_TAG}"
+curl -F vmimage\[osname\]=${SELECT_OS} -F vmimage\[osversion\]=${SELECT_VER} -F vmimage\[tag_list\]=${SELECT_TAG} -F vmimage\[file\]=\@${VMFILEPATH} "${WEBROOT}/vmimages"
 
 #${RUBY} jsonpost.rb ${SELECT_OS} ${SELECT_VER} ${SELECTBOOKS[@]}
