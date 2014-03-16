@@ -7,12 +7,20 @@ class VmimagesController < ApplicationController
   # GET /vmimages.json
   def index
     # 検索フォームの入力内容で検索する
-    @q = Vmimage.search(params[:q])
+    if  params[:q] != nil 
+      @q = Vmimage.search(params[:q])
+      # 重複を排除
+      @vmimages = @q.result(distinct: true)
+      
+      p "params[:tag]"
+      p params[:tag]
+      if  params[:tag] != "non_tag_search" 
+        @vmimages = @vmimages.tagged_with([params[:tag]], :match_all => true)
+      end
+    else
+      @vmimages = Vmimage.all      
+    end
     
-    # 重複を排除
-    @vmimages = @q.result(distinct: true)
-
-#    @vmimages = Vmimage.all
   end
 
   # GET /vmimages/1
@@ -71,14 +79,13 @@ class VmimagesController < ApplicationController
     end
   end
 
-  # GET /vmimages/1/dl
+  # GET /vmimages/1/download
   def download
     filepath = @vmimage.full_path.encode("cp932")
     stat = File::stat(filepath)
-    p @vmimage
     send_file(filepath,:filename => "#{@vmimage.osname}-#{@vmimage.osversion}.vbox")
   end
-
+  
   def search
     # 検索フォームの入力内容で検索する
     @q = Vmimage.search(params[:q])

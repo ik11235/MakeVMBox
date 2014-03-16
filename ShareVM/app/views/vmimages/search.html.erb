@@ -14,10 +14,13 @@
     <%= f.label :osversion_cont %>
     <div class="controls">
       <%= f.select :osversion_eq, Vmimage.select(:osversion).uniq.map{|st| [st.osversion,st.osversion]} %>
-
+      
     </div>
   </div>
-
-
+  <div class="field">
+    <%= f.label :"Tags (separated by commas)" %>
+    <%= text_field_tag 'tag' %>
+  </div>
+  
   <%= f.submit %>
-<% end %>
+  <% end %>
