@@ -83,7 +83,7 @@ class VmimagesController < ApplicationController
   def download
     filepath = @vmimage.full_path.encode("cp932")
     stat = File::stat(filepath)
-    send_file(filepath,:filename => "#{@vmimage.osname}-#{@vmimage.osversion}.vbox")
+    send_file(filepath,:filename => "#{@vmimage.osname}-#{@vmimage.osversion}.box")
   end
   
   def search

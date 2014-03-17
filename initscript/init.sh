@@ -5,19 +5,18 @@ VIRTUALBOX=`which virtualbox`
 VEEWEE=`which veewee`
 RUBY=`which ruby`
 
-VAGRANT="echo ${VAGRANT}"
-VIRTUALBOX="echo ${VIRTUALBOX}"
-VEEWEE="echo ${VEEWEE}"
-#RUBY="echo ${RUBY}"
+DEBUG=$1
+DEBUG=${DEBUG:0}
 
-DEBUG="1"
-
-if [  ${DEBUG} == "1" ];then
-    echo "This is Debug mode."
+if [ "${DEBUG}" == 1 ];then
+    #echo "This is Debug mode."
+    VAGRANT="echo ${VAGRANT}"
+    VIRTUALBOX="echo ${VIRTUALBOX}"
+    VEEWEE="echo ${VEEWEE}"
+    #RUBY="echo ${RUBY}"
 fi
 
 WEBROOT="http://localhost:3000/"
-
 
 if [ -z "${VIRTUALBOX}" ];then
     echo 'VirtualBox not found'
@@ -115,7 +114,7 @@ done
 #イメージ名の指定
 echo 'Please input VM image name : '
 read VMNAME
-VMFILEPATH=${VMNAME}.vbox
+VMFILEPATH=${VMNAME}.box
 
 #既存イメージの検索 
 ##http://localhost:3000/vmimages.json?&q%5Bosname_eq%5D=ubuntu&q%5Bosversion_eq%5D=8.04.4-server-i386
@@ -129,15 +128,16 @@ if [ -n "${IDLIST[0]}" ]; then
 	"" | "Y" | "y" | "yes" | "Yes" | "YES" )
 	    curl -o ${VMFILEPATH} ${WEBROOT}/vmimage/${IDLIST[0]}/download
 	    echo "finish Download VMimage. FILENAME is ${VMFILEPATH}"
+	    echo "Box add command: \"${VAGRANT} box add ${VMNAME} ${VMFILEPATH}\""
 	    exit 0;;
     esac
 fi
 
 
 SELECT_TAG=`echo ${SELECTBOOKS[@]}|sed -e s/\ /\,/g`
-if [  ${DEBUG} == "1" ];then
+if [  "${DEBUG}" == 1 ];then
     ##test mode
-    touch ${VMFILEPATH}
+    echo "${VMNAME}  ${SELECT_OS}-${SELECT_VER}"> ${VMFILEPATH}
 else
     #main mode
     #選択イメージのインストール
@@ -183,7 +183,7 @@ else
     ${VEEWEE} vbox halt ${VMNAME}
     
     #boxのイメージ化
-    VMFILEPATH=${VMNAME}.vbox
+    VMFILEPATH=${VMNAME}.box
     ${VAGRANT} package --base ${VMNAME} --output ${VMFILEPATH}
     
 fi
@@ -202,10 +202,11 @@ case $ANSWER in
 	    echo "tag:${SELECT_TAG}"
 	    echo "vmfile:${VMFILEPATH}"
 	    exit 1;
-	else
-	    SUBMIT=`echo ${SUBMIT}| sed -e 's/<html><body>You are being <a href=//'| sed -e 's/>redirected<\/a>\.<\/body><\/html>//'`
+	else	    
+	    SUBMIT=`echo ${SUBMIT}| sed -e 's/<html><body>You are being <a href=\"//'`
+	    SUBMIT=`echo ${SUBMIT}| sed -e 's/\">redirected<\/a>\.<\/body><\/html>//'`
+	    SUBMIT=`echo ${SUBMIT}/download| sed -e 's/vmimages/vmimage/'`
 	    echo "Success File Upload! Image File URL: ${SUBMIT}";
 	    exit 0;
 	fi
 esac
-

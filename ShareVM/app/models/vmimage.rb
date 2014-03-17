@@ -4,7 +4,8 @@ class Vmimage < ActiveRecord::Base
   
   attr_accessor :file
   
-  before_create :store_file
+
+  before_save :store_file
   before_destroy :destroy_file
 
   def full_path
@@ -13,6 +14,8 @@ class Vmimage < ActiveRecord::Base
   
   private
   def store_file
+    p "befor delete"
+    destroy_file
     #    p "self this"
     #   p self
     self.filepath = '/attachments/' + SecureRandom.urlsafe_base64(6)
@@ -26,7 +29,9 @@ class Vmimage < ActiveRecord::Base
   end
   
   def destroy_file
+      p "delete!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     begin
+      p full_path
       File.unlink full_path
     rescue
       nil
