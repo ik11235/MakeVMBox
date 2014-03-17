@@ -10,6 +10,12 @@ VIRTUALBOX="echo ${VIRTUALBOX}"
 VEEWEE="echo ${VEEWEE}"
 #RUBY="echo ${RUBY}"
 
+DEBUG="1"
+
+if [  ${DEBUG} == "1" ];then
+    echo "This is Debug mode."
+fi
+
 WEBROOT="http://localhost:3000/"
 
 
@@ -77,7 +83,6 @@ echo Install image is ${SELECT_OS}-${SELECT_VER}
 ####https://api.github.com/users/opscode-cookbooks/repos
 
 
-
 TMPDIR="./TMP"
 mkdir -p ${TMPDIR}
 touch ${TMPDIR}/tmpfile
@@ -128,75 +133,79 @@ if [ -n "${IDLIST[0]}" ]; then
     esac
 fi
 
-##test 
-touch ${VMFILEPATH}
+
 SELECT_TAG=`echo ${SELECTBOOKS[@]}|sed -e s/\ /\,/g`
-SUBMIT=`curl -F vmimage\[osname\]=${SELECT_OS} -F vmimage\[osversion\]=${SELECT_VER} -F vmimage\[tag_list\]=${SELECT_TAG} -F vmimage\[file\]=\@${VMFILEPATH} "${WEBROOT}/vmimages"`
-if [ $? -ne 0 ]; then
-  echo "File Upload Error! Please Manual upload to ${WEBROOT}";
-  echo "osname:${SELECT_OS}"
-  echo "osversion:${SELECT_VER}"
-  echo "tag:${SELECT_TAG}"
-  echo "vmfile:${VMFILEPATH}"
-  exit 1;
+if [  ${DEBUG} == "1" ];then
+    ##test mode
+    touch ${VMFILEPATH}
 else
-    SUBMIT=`echo ${SUBMIT}| sed -e 's/<html><body>You are being <a href=//'| sed -e 's/>redirected<\/a>\.<\/body><\/html>//'`
+    #main mode
+    #選択イメージのインストール
+    ${VEEWEE} vbox define ${VMNAME} ${SELECT_OS}-${SELECT_VER}
     
-    echo "Success File Upload! Image File URL: ${SUBMIT}";
-    exit 0;
+    #イメージの初期設定
+    ## 一般ユーザ パスワード
+    ## 
+    
+    #Chef設定
+    
+    #cp ./config/Berksfile ./definitions/${VMNAME}/
+    #for Recipe in "${SELECTBOOKS[@]}";
+    #do
+    #    echo "cookbook \"${Recipe}\" , git: \"https://github.com/opscode-cookbooks/${Recipe}.git\"" >> ./definitions/${VMNAME}/Berksfile
+    #done
+    #cp ./config/Vagrantfile ./definitions/${VMNAME}/
+    #echo '$GEM install berkshelf' >> ./definitions/${VMNAME}/Chef.sh #install OK
+    #echo "berks install" >> ./definitions/${VMNAME}/Chef.sh # not found and not Berksfile
+    #  :postinstall_files => [
+    
+    #cat ./definitions/${VMNAME}/Berksfile
+    #cat ./definitions/${VMNAME}/Chef.sh
+    #exit 1;
+    
+    ##echo "config.berkshelf.enabled = true">Vagrantfile
+    ##echo "config.vm.provision :chef_solo do |chef|">>Vagrantfile
+    ##echo "chef.run_list = [">>Vagrantfile
+    ##for Recipe in "${SELECTBOOKS[@]}";
+    ##do
+    ##    echo "\"recipe[${Recipe}]\"" >>Vagrantfile
+    ##done
+    ##echo "] end" >>Vagrantfile
+    
+
+    #イメージのビルド
+    ${VEEWEE} vbox build ${VMNAME}
+    
+    #chef設定を行う?
+    ##もしくはdefine直後に.shに追記する?
+    
+    #boxのシャットダウン
+    ${VEEWEE} vbox halt ${VMNAME}
+    
+    #boxのイメージ化
+    VMFILEPATH=${VMNAME}.vbox
+    ${VAGRANT} package --base ${VMNAME} --output ${VMFILEPATH}
+    
 fi
 
+echo "Finish make VMimage."
+echo "Upload This image?[Y/n]"
+read ANSWER
+case $ANSWER in
+    "" | "Y" | "y" | "yes" | "Yes" | "YES" )
+	#作成したイメージの情報をwebに転送
+	SUBMIT=`curl -F vmimage\[osname\]=${SELECT_OS} -F vmimage\[osversion\]=${SELECT_VER} -F vmimage\[tag_list\]=${SELECT_TAG} -F vmimage\[file\]=\@${VMFILEPATH} "${WEBROOT}/vmimages"`
+	if [ $? -ne 0 ]; then
+	    echo "File Upload Error! Please Manual upload to ${WEBROOT}";
+	    echo "osname:${SELECT_OS}"
+	    echo "osversion:${SELECT_VER}"
+	    echo "tag:${SELECT_TAG}"
+	    echo "vmfile:${VMFILEPATH}"
+	    exit 1;
+	else
+	    SUBMIT=`echo ${SUBMIT}| sed -e 's/<html><body>You are being <a href=//'| sed -e 's/>redirected<\/a>\.<\/body><\/html>//'`
+	    echo "Success File Upload! Image File URL: ${SUBMIT}";
+	    exit 0;
+	fi
+esac
 
-#選択イメージのインストール
-${VEEWEE} vbox define ${VMNAME} ${SELECT_OS}-${SELECT_VER}
-
-#イメージの初期設定
-## 一般ユーザ パスワード
-## 
-
-
-#Chef設定
-
-cp ./config/Berksfile ./definitions/${VMNAME}/
-for Recipe in "${SELECTBOOKS[@]}";
-do
-    echo "cookbook \"${Recipe}\" , git: \"https://github.com/opscode-cookbooks/${Recipe}.git\"" >> ./definitions/${VMNAME}/Berksfile
-done
-##cp ./config/Vagrantfile ./definitions/${VMNAME}/
-echo '$GEM install berkshelf' >> ./definitions/${VMNAME}/Chef.sh #install OK
-echo "berks install" >> ./definitions/${VMNAME}/Chef.sh # not found and not Berksfile
-  :postinstall_files => [
-
-#cat ./definitions/${VMNAME}/Berksfile
-#cat ./definitions/${VMNAME}/Chef.sh
-#exit 1;
-
-##echo "config.berkshelf.enabled = true">Vagrantfile
-##echo "config.vm.provision :chef_solo do |chef|">>Vagrantfile
-##echo "chef.run_list = [">>Vagrantfile
-##for Recipe in "${SELECTBOOKS[@]}";
-##do
-##    echo "\"recipe[${Recipe}]\"" >>Vagrantfile
-##done
-##echo "] end" >>Vagrantfile
-
-
-#イメージのビルド
-${VEEWEE} vbox build ${VMNAME}
-
-#chef設定を行う?
-##もしくはdefine直後に.shに追記する?
-
-#boxのシャットダウン
-${VEEWEE} vbox halt ${VMNAME}
-
-#boxのイメージ化
-VMFILEPATH=${VMNAME}.vbox
-${VAGRANT} package --base ${VMNAME} --output ${VMFILEPATH}
-
-#作成したイメージの情報をwebに転送
-SELECT_TAG=`echo ${SELECTBOOKS[@]}|sed -e s/\ /\,/g`
-#echo "tags =${SELECT_TAG}"
-curl -F vmimage\[osname\]=${SELECT_OS} -F vmimage\[osversion\]=${SELECT_VER} -F vmimage\[tag_list\]=${SELECT_TAG} -F vmimage\[file\]=\@${VMFILEPATH} "${WEBROOT}/vmimages"
-
-#${RUBY} jsonpost.rb ${SELECT_OS} ${SELECT_VER} ${SELECTBOOKS[@]}
